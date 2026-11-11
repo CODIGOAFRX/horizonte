@@ -52,7 +52,7 @@ function cuadro(ahora) {
     let capitulo = '';
     for (const e of escenas) {
         const r = e.seccion.getBoundingClientRect();
-        if (r.top < vh * 0.5 && r.bottom > vh * 0.5) capitulo = e.seccion.dataset.titulo || '';
+        if (r.top < vh * 0.5 && r.bottom > vh * 0.5) capitulo = e.seccion.dataset.titulo || (e.previo.r ? `r = ${e.previo.r} radios` : '');
         if (r.bottom < -40 || r.top > vh + 40) continue;
         if (parado && e.visto && !sucio) continue;
         const p = parado ? Number(e.seccion.dataset.quieto ?? 0.5) : Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - vh)));

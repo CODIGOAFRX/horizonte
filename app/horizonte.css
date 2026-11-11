@@ -74,7 +74,9 @@ sub, sup { font-size: 0.68em; line-height: 0; }
 .paso h2 + h3 { margin-top: 1.6rem; }
 .nota { color: var(--tenue); font-size: 0.9em; }
 .ec { font-size: 1.25em; color: var(--frio); margin-top: 0.5rem; white-space: nowrap; }
-.raiz { border-top: 1px solid currentColor; padding: 0.08em 0.15em 0 0.1em; }
+math { font-family: var(--serif); font-style: normal; font-size: 1.05em; }
+mfrac { padding-inline: 0.12em; }
+math mi { font-style: italic; }
 
 /* El texto entra y sale con su posición en la ventana */
 @supports (animation-timeline: view()) {
@@ -84,9 +86,9 @@ sub, sup { font-size: 0.68em; line-height: 0; }
     }
 }
 @keyframes paso {
-    0%, 22% { opacity: 0; filter: blur(8px); transform: translateY(1.5rem); }
-    40%, 62% { opacity: 1; filter: blur(0); transform: none; }
-    80%, 100% { opacity: 0; filter: blur(8px); transform: translateY(-1.5rem); }
+    0%, 16% { opacity: 0; transform: translateY(1.25rem); }
+    28%, 72% { opacity: 1; transform: none; }
+    84%, 100% { opacity: 0; transform: translateY(-1.25rem); }
 }
 @keyframes paso-sale {
     0%, 62% { opacity: 1; filter: blur(0); transform: none; }
@@ -108,7 +110,7 @@ h1 { font-size: clamp(4.2rem, 1rem + 15vw, 12rem); line-height: 0.86; letter-spa
 .lecturas .ancha dd { text-align: left; color: var(--calido); font-family: var(--serif); font-size: 1.12rem; }
 .plano .lecturas { position: absolute; z-index: 3; right: calc(var(--margen) - 0.9rem); bottom: clamp(1rem, 3vh, 2rem); width: min(24.8rem, 36vw); padding: 0.2rem 0.9rem 0.3rem; background: rgb(4 6 11 / 0.7); }
 .plano .lecturas > div:first-child { border-top: 0; }
-.portada .plano .lecturas { width: auto; background: transparent; }
+.portada .plano .lecturas { display: none; }
 .portada .lecturas > div { border: 0; }
 
 input[type="number"] {
@@ -135,7 +137,7 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 1.2
 input[type="range"]::-moz-range-thumb { width: 1rem; height: 1rem; border-radius: 50%; background: var(--fondo); border: 2px solid var(--calido); }
 input[type="range"]:hover::-webkit-slider-thumb, input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.25); background: var(--calido); }
 
-.cierre { max-width: none; border-top: 1px solid var(--linea); background: linear-gradient(to bottom, var(--fondo-2), var(--fondo) 70%); }
+.cierre { max-width: none; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; border-top: 1px solid var(--linea); background: linear-gradient(to bottom, var(--fondo-2), var(--fondo) 70%); }
 .columnas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1.4rem clamp(2rem, 5vw, 4.5rem); max-width: 68rem; }
 .enlaces { list-style: none; margin-top: 3.2rem; display: flex; flex-wrap: wrap; gap: 0.9rem 2.6rem; font-size: 1.25em; }
 .enlaces a { display: inline-block; padding: 0.3rem 0; }
@@ -158,7 +160,7 @@ input[type="range"]:hover::-webkit-slider-thumb, input[type="range"]:active::-we
 @media (max-aspect-ratio: 115/100), (max-width: 760px) {
     .capitulo { display: none; }
     .cab { grid-template-columns: 1fr auto; }
-    .plano::after { background: linear-gradient(to top, rgb(4 6 11 / 0.94) 0%, rgb(4 6 11 / 0.8) 38%, rgb(4 6 11 / 0) 66%); }
+    .plano::after { background: linear-gradient(to top, rgb(4 6 11 / 0.94) 0%, rgb(4 6 11 / 0.82) 30%, rgb(4 6 11 / 0) 47%); }
     .paso { justify-content: flex-end; padding: 5rem var(--margen) calc(var(--franja, 7.5rem) + 1.5rem); max-width: none; }
     .plano .lecturas {
         left: 0; right: 0; bottom: 0; width: auto; padding: 0.35rem var(--margen) 0.6rem; background: var(--fondo);
@@ -169,7 +171,8 @@ input[type="range"]:hover::-webkit-slider-thumb, input[type="range"]:active::-we
     .plano .lecturas .ancha { grid-column: 1 / -1; }
     .lecturas .ancha dd { font-size: 0.95rem; }
     .portada { --franja: 2.5rem; }
-    .portada .plano .lecturas { background: transparent; border: 0; }
+    .portada .plano .lecturas { display: grid; background: transparent; border: 0; }
+    .plano .lecturas input[type="number"] { font-size: 1rem; text-align: left; }
     #curvatura { --franja: 3.5rem; }
     #planetas, #descenso { --franja: 9.5rem; }
     .quieto .paso { padding-bottom: 2.2rem; }
@@ -177,7 +180,7 @@ input[type="range"]:hover::-webkit-slider-thumb, input[type="range"]:active::-we
     html:not(.sin-js) .paso > * { animation-name: paso-bajo; }
 }
 @keyframes paso-bajo {
-    0%, 16% { opacity: 0; filter: blur(8px); transform: translateY(1rem); }
-    26%, 46% { opacity: 1; filter: blur(0); transform: none; }
-    60%, 100% { opacity: 0; filter: blur(8px); transform: translateY(-1rem); }
+    0%, 10% { opacity: 0; transform: translateY(1rem); }
+    18%, 50% { opacity: 1; transform: none; }
+    60%, 100% { opacity: 0; transform: translateY(-1rem); }
 }

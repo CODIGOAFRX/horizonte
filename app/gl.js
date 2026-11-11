@@ -84,9 +84,6 @@ ${RUIDO}
 void main(){
   vec2 uv=(gl_FragCoord.xy-.5*uRes)/uRes.y;
   vec3 col=vec3(0.);
-  // estrellas de fondo
-  vec2 g=uv*70.,id=floor(g),f=fract(g)-.5;float hs=hash(vec3(id,7.));
-  col+=step(.94,hs)*smoothstep(.09,0.,length(f-(vec2(hash(vec3(id,1.)),hash(vec3(id,2.)))-.5)*.6))*vec3(.7,.78,1.)*.7;
   vec2 q=(uv-vec2(uCentro+uOff,.02))/uRad;
   float r=length(q);
   vec3 L=normalize(vec3(-.62,.34,.7));
@@ -186,7 +183,7 @@ export function portada(canvas) {
     const pinta = programa(canvas, AGUJERO);
     if (!pinta) return null;
     const escena = {
-        escala: Math.min(devicePixelRatio || 1, 1) * 0.8,
+        escala: Math.min(devicePixelRatio || 1, 1.5),
         pintar(p, t, w, h, dt) {
             const dist = mezcla(30, 22, p);
             pinta(w, h, { uRes: [w, h], uT: t, uDist: dist, uIncl: mezcla(0.1, 0.15, p), uMira: 0, uRoll: -0.2, uCentro: centro(w, h), uAlto: 0.1, uFoco: 1.45 });
@@ -203,7 +200,7 @@ export function descenso(canvas) {
     if (!pinta) return null;
     const rs = radioS(SGR_A), rsEstelar = radioS(10 * MSOL);
     const escena = {
-        escala: Math.min(devicePixelRatio || 1, 1) * 0.8,
+        escala: Math.min(devicePixelRatio || 1, 1.5),
         pintar(p, t, w, h, dt) {
             // Los pasos del texto caen en r = 22, 9, 3, 1,8 y 1,1 radios; se interpola en log(r − 1)
             const k = Math.min(p / 0.2, RUTA.length - 1.0001), i = Math.floor(k);
@@ -251,6 +248,7 @@ export function planetas(canvas, seccion) {
     const pinta = programa(canvas, PLANETA);
     if (!pinta) return null;
     const masa = seccion.querySelector('#masa');
+    const tierra = PLANETAS.find(q => q.nombre === 'Tierra'), gTierra = gravedad(tierra.M, tierra.R);
     const escena = {
         escala: Math.min(devicePixelRatio || 1, 1.5),
         pintar(p, t, w, h) {
@@ -268,7 +266,7 @@ export function planetas(canvas, seccion) {
             return {
                 nombre: pl.nombre,
                 g: `${num(g, 2)} m/s²`,
-                peso: `${num(kg * g / G0, 1)} kg`,
+                peso: `${num(kg * g / gTierra, 1)} kg`,
                 escape: `${num(vEscape(pl.M, pl.R) / 1000, 1)} km/s`,
                 reloj: `${duracion(G * pl.M / (pl.R * C * C) * ANIO)} al año`,
             };

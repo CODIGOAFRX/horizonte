@@ -89,7 +89,7 @@ export function relojes(canvas) {
             if (dt) { lejos += dt * 0.6; aqui += dt * 0.6 * f; } else { lejos = 0.62; aqui = 0.62 * f; }
             ctx.clearRect(0, 0, w, h);
             const R = ancho ? Math.min(w * 0.1, h * 0.17) : Math.min(w * 0.2, h * 0.12);
-            const u = Math.max(1, h / 800);
+            const u = Math.max(1, h / 800), dp = h / Math.max(1, canvas.clientHeight);
             const esfera = (x, y, vuelta, color, rotulo) => {
                 ctx.strokeStyle = rgba(color, 0.9); ctx.lineWidth = u * 1.2;
                 ctx.beginPath(); ctx.arc(x, y, R, 0, 7); ctx.stroke();
@@ -107,7 +107,7 @@ export function relojes(canvas) {
                 ctx.beginPath(); ctx.moveTo(x - Math.sin(a) * R * 0.12, y + Math.cos(a) * R * 0.12);
                 ctx.lineTo(x + Math.sin(a) * R * 0.84, y - Math.cos(a) * R * 0.84); ctx.stroke();
                 ctx.fillStyle = rgba(color, 1); ctx.beginPath(); ctx.arc(x, y, u * 3, 0, 7); ctx.fill();
-                ctx.font = `italic ${Math.round(R * 0.16)}px "CMU Serif", serif`; ctx.textAlign = 'center';
+                ctx.font = `italic ${Math.round(Math.max(R * 0.16, 13 * dp))}px "CMU Serif", serif`; ctx.textAlign = 'center';
                 ctx.fillText(rotulo, x, y + R * 1.34);
             };
             esfera(cx - R * 1.3, cy, lejos, FRIO, 'lejos de toda masa');
@@ -124,7 +124,7 @@ export function relojes(canvas) {
             }
             ctx.fillStyle = rgba(CALIDO, 1);
             ctx.beginPath(); ctx.moveTo(px(le), y - u * 7); ctx.lineTo(px(le) - u * 6, y - u * 18); ctx.lineTo(px(le) + u * 6, y - u * 18); ctx.fill();
-            ctx.fillStyle = rgba(TEXTO, 0.8); ctx.font = `${Math.round(R * 0.14)}px "CMU Serif", serif`;
+            ctx.fillStyle = rgba(TEXTO, 0.8); ctx.font = `${Math.round(Math.max(R * 0.14, 13 * dp))}px "CMU Serif", serif`;
             ctx.textAlign = 'left'; ctx.fillText('Tierra', x0, y + R * 0.26);
             ctx.textAlign = 'right'; ctx.fillText('horizonte', x1, y + R * 0.26);
             const x = 1 + e;
@@ -170,6 +170,11 @@ export function luz(canvas) {
             ctx.strokeStyle = rgba(CALIDO, 0.5 * cercaA);
             ctx.beginPath(); ctx.arc(cx, cy, B_CRITICO * k, 0, 7); ctx.stroke();
             ctx.setLineDash([]);
+            // Rótulos de los dos círculos, cuando ya se distinguen
+            const dp = h / Math.max(1, canvas.clientHeight);
+            ctx.font = `italic ${Math.round(14 * dp)}px "CMU Serif", serif`; ctx.textAlign = 'left';
+            ctx.fillStyle = rgba(TEXTO, 0.85 * suave(16, 9, W)); ctx.fillText('esfera de fotones', cx + 1.5 * k * 0.72, cy - 1.5 * k * 0.72 - 6 * dp);
+            ctx.fillStyle = rgba(CALIDO, 0.9 * suave(16, 9, W)); ctx.fillText('sombra', cx + B_CRITICO * k * 0.72 + 6 * dp, cy + B_CRITICO * k * 0.72 + 14 * dp);
             ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(cx, cy, Math.max(1.5, k), 0, 7); ctx.fill();
             ctx.strokeStyle = rgba(CALIDO, 0.9); ctx.beginPath(); ctx.arc(cx, cy, Math.max(1.5, k), 0, 7); ctx.stroke();
             const grados = giro * 180 / Math.PI;
