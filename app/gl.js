@@ -15,7 +15,7 @@ float fbm(vec3 p){float s=0.,a=.5;for(int i=0;i<5;i++){s+=a*ruido(p);p=p*2.03+7.
 // (unidades de rs): d²x/dλ² = −(3/2)·h²·x/r⁵. El disco está en el plano y = 0, entre la última
 // órbita estable (3 rs) y 14 rs, con brillo Doppler y corrimiento al rojo gravitatorio.
 const AGUJERO = `precision highp float;
-uniform vec2 uRes;uniform float uT,uDist,uIncl,uMira,uRoll,uCentro,uAlto,uFoco;
+uniform vec2 uRes;uniform float uT,uDist,uIncl,uMira,uRoll,uCentro,uAlto,uFoco,uPasos,uOrden,uEstrellas;
 ${RUIDO}
 vec3 negro(float t){ // rampa de cuerpo negro, t relativo
   vec3 c=mix(vec3(.5,.04,0.),vec3(1.,.36,.08),smoothstep(.15,.5,t));
@@ -29,7 +29,7 @@ vec3 cielo(vec3 d){
     float h=hash(id+float(k)*31.);
     vec3 o=(vec3(hash(id+3.),hash(id+5.),hash(id+9.))-.5)*.6;
     float b=step(k==0?.86:.93,h)*smoothstep(k==0?.11:.07,0.,length(f-o));
-    col+=b*b*negro(.6+hash(id+11.)*1.6)*(k==0?1.6:4.);}
+    col+=b*b*negro(.6+hash(id+11.)*1.6)*(k==0?1.6:4.)*uEstrellas;}
   float banda=exp(-pow(dot(d,normalize(vec3(.35,.9,.2)))*5.,2.));
   col+=banda*vec3(.016,.02,.034)*pow(fbm(d*5.)*1.5,2.);
   return col;}
@@ -42,9 +42,10 @@ void main(){
   vec3 rt=normalize(cross(vec3(0.,1.,0.),fw)),up=cross(fw,rt);
   vec3 p=ro,v=normalize(fw*uFoco+uv.x*rt+uv.y*up);
   vec3 hv=cross(p,v);float h2=dot(hv,hv);
-  vec3 col=vec3(0.);float paso=1.;bool cae=false;
+  vec3 col=vec3(0.);float paso=1.,cruces=0.;bool cae=false;
   float lim=uDist*1.5+30.;
   for(int i=0;i<190;i++){
+    if(float(i)>=uPasos)break;
     float r2=dot(p,p),r=sqrt(r2);
     if(r<1.){cae=true;break;}
     if(r>lim)break;
@@ -53,7 +54,8 @@ void main(){
     vec3 pn=p+v*dt;
     if(p.y*pn.y<0.){
       vec3 c=mix(p,pn,p.y/(p.y-pn.y));float rc=length(c.xz);
-      if(rc>3.&&rc<14.){
+      cruces+=1.;
+      if(rc>3.&&rc<14.&&cruces<=uOrden){
         float beta=sqrt(.5/rc);
         vec3 vd=normalize(vec3(-c.z,0.,c.x));
         float dop=sqrt(1.-beta*beta)/(1.+beta*dot(vd,normalize(v)));
@@ -154,7 +156,7 @@ function programa(canvas, frag) {
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
     const loc = {};
-    return (w, h, u) => {
+    const pinta = (w, h, u) => {
         gl.viewport(0, 0, w, h);
         for (const k in u) {
             const l = loc[k] ??= gl.getUniformLocation(p, k);
@@ -163,14 +165,20 @@ function programa(canvas, frag) {
         }
         gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
+    // Espera a que la gráfica termine el fotograma: sirve para medir lo que cuesta de verdad
+    const pixel = new Uint8Array(4);
+    pinta.sincroniza = () => gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+    return pinta;
 }
 
 // Baja la resolución interna si el equipo no llega a un ritmo fluido
-function ajuste(escena) {
+// Baja la resolución interna si el equipo no llega a un ritmo fluido. `aguante` es cuántos
+// fotogramas lentos tolera antes de bajar y `suelo`, la escala mínima.
+function ajuste(escena, { aguante = 12, suelo = 0.34 } = {}) {
     let lentos = 0;
     return dt => {
         lentos = dt > 0.034 ? lentos + 1 : Math.max(0, lentos - 1);
-        if (lentos > 12 && escena.escala > 0.34) { escena.escala *= 0.82; lentos = 0; }
+        if (lentos > aguante && escena.escala > suelo) { escena.escala = Math.max(suelo, escena.escala * 0.82); lentos = 0; }
     };
 }
 
@@ -186,7 +194,7 @@ export function portada(canvas) {
         escala: Math.min(devicePixelRatio || 1, 1.5),
         pintar(p, t, w, h, dt) {
             const dist = mezcla(30, 22, p);
-            pinta(w, h, { uRes: [w, h], uT: t, uDist: dist, uIncl: mezcla(0.1, 0.15, p), uMira: 0, uRoll: -0.2, uCentro: centro(w, h), uAlto: 0.1, uFoco: 1.45 });
+            pinta(w, h, { uRes: [w, h], uT: t, uDist: dist, uIncl: mezcla(0.1, 0.15, p), uMira: 0, uRoll: -0.2, uCentro: centro(w, h), uAlto: 0.1, uFoco: 1.45, uPasos: 190, uOrden: 9, uEstrellas: 1 });
             medir(dt);
             return { r: num(dist, 1) };
         },
@@ -195,23 +203,41 @@ export function portada(canvas) {
     return escena;
 }
 
-export function descenso(canvas) {
+// `opciones` aligera la escena para quien la incrusta (el portfolio): `escala` de partida,
+// `pasos` de integración por rayo (190 como máximo), `orden` (cuántas imágenes del disco se
+// pintan: 2 deja la directa y la lenteada y quita el anillo fino, que a baja resolución
+// sale punteado) y `estrellas` (0 las apaga). Con `presupuesto` (milisegundos de gráfica por
+// fotograma) la resolución deja de fiarse del ritmo de la página: se mide lo que tarda la
+// gráfica y la escala sube o baja entre `suelo` y `techo` para ajustarse a él.
+export function descenso(canvas, seccion, opciones = {}) {
     const pinta = programa(canvas, AGUJERO);
+    const pasos = Math.min(190, opciones.pasos || 190);
+    const { presupuesto = 0, suelo = 0.34, techo = 1.5 } = opciones;
+    let cuadros = 0;
     if (!pinta) return null;
     const rs = radioS(SGR_A), rsEstelar = radioS(10 * MSOL);
     const escena = {
-        escala: Math.min(devicePixelRatio || 1, 1.5),
+        escala: opciones.escala || Math.min(devicePixelRatio || 1, 1.5),
         pintar(p, t, w, h, dt) {
             // Los pasos del texto caen en r = 22, 9, 3, 1,8 y 1,1 radios; se interpola en log(r − 1)
             const k = Math.min(p / 0.2, RUTA.length - 1.0001), i = Math.floor(k);
             const x = 1 + Math.exp(mezcla(RUTA[i], RUTA[i + 1], k - i));
             const mira = 0.42 * suave(0.2, 0.42, p) + 0.58 * suave(0.62, 0.8, p);
             const dentro = p > 0.965;
+            const mide = presupuesto && ++cuadros > 6 && cuadros % 5 === 0;
+            const t0 = mide ? performance.now() : 0;
             pinta(w, h, {
-                uRes: [w, h], uT: t, uDist: x, uIncl: mezcla(0.15, 0.42, suave(0, 0.7, p)), uMira: mira, uFoco: mezcla(1.45, 0.8, suave(0.15, 0.6, p)),
+                uOrden: opciones.orden || 9, uEstrellas: opciones.estrellas ?? 1,
+                uRes: [w, h], uT: t, uDist: x, uIncl: mezcla(0.15, 0.42, suave(0, 0.7, p)), uMira: mira, uFoco: mezcla(1.45, 0.8, suave(0.15, 0.6, p)), uPasos: pasos,
                 uRoll: mezcla(-0.2, 0, suave(0.3, 0.78, p)), uAlto: 0.1 * (1 - suave(0, 0.3, p)), uCentro: centro(w, h) * (1 - suave(0.3, 0.6, p)),
             });
-            medir(dt);
+            if (mide) {
+                pinta.sincroniza();
+                const ms = Math.max(0.5, performance.now() - t0);
+                const ideal = escena.escala * Math.sqrt(presupuesto / ms);
+                const nueva = Math.min(techo, Math.max(suelo, escena.escala + (ideal - escena.escala) * 0.5));
+                if (Math.abs(nueva - escena.escala) > escena.escala * 0.07) escena.escala = nueva;
+            } else if (!presupuesto) medir(dt);
             const g = a => (a / G0 >= 0.001 ? `${cifras(a / G0)} g` : 'menos de 0,001 g');
             return dentro
                 ? { r: 'menos de 1', km: 'dentro', ritmo: 'sin reloj lejano', escape: 'más que la luz', marea: 'crece sin límite', mareaE: 'crece sin límite', '--negro': 1 }
@@ -226,7 +252,7 @@ export function descenso(canvas) {
                 };
         },
     };
-    const medir = ajuste(escena);
+    const medir = ajuste(escena, opciones);
     return escena;
 }
 
