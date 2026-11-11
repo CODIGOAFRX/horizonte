@@ -298,7 +298,8 @@ export function portada(canvas) {
 // `opciones` aligera la escena para quien la incrusta (el portfolio): `escala` de partida,
 // `pasos` de integración por rayo (190 como máximo), `orden` (cuántas imágenes del disco se
 // pintan: 2 deja la directa y la lenteada y quita el anillo fino, que a baja resolución
-// sale punteado) y `estrellas` (0 las apaga). Con `presupuesto` (milisegundos de gráfica por
+// sale punteado), `estrellas` (0 las apaga), `niebla` (0 quita la banda de la galaxia y deja el
+// cielo negro) y `giro` (radianes por segundo a los que el cielo da vueltas alrededor del agujero). Con `presupuesto` (milisegundos de gráfica por
 // fotograma) la resolución deja de fiarse del ritmo de la página: se mide lo que tarda la
 // gráfica y la escala sube o baja entre `suelo` y `techo` para ajustarse a él.
 export function descenso(canvas, seccion, opciones = {}) {
@@ -319,7 +320,7 @@ export function descenso(canvas, seccion, opciones = {}) {
             const mide = presupuesto && ++cuadros > 6 && cuadros % 5 === 0;
             const t0 = mide ? performance.now() : 0;
             pinta(w, h, {
-                uOrden: opciones.orden || 9, uEstrellas: opciones.estrellas ?? 1, uNiebla: 1, uGiro: 0,
+                uOrden: opciones.orden || 9, uEstrellas: opciones.estrellas ?? 1, uNiebla: opciones.niebla ?? 1, uGiro: t * (opciones.giro || 0),
                 uRes: [w, h], uT: t, uDist: x, uIncl: mezcla(0.15, 0.42, suave(0, 0.7, p)), uMira: mira, uFoco: mezcla(1.45, 0.8, suave(0.15, 0.6, p)), uPasos: pasos,
                 uRoll: mezcla(-0.2, 0, suave(0.3, 0.78, p)), uAlto: 0.1 * (1 - suave(0, 0.3, p)), uCentro: centro(w, h) * (1 - suave(0.3, 0.6, p)),
             });
