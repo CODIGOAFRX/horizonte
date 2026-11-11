@@ -19,13 +19,42 @@ function camara(E, S, cx, cy, fuga = 0.33) {
     };
 }
 
+// La bola de prueba de la malla. Se mueve por el plano (x, z) con la aceleración que le da la pendiente
+// del pozo, −K·∇pozo con pozo(d) = −D·s/√(d² + s²): sin masa va recta y con ella se curva. Cuando hay
+// masa, una guía suave (proporcional a `m`) la lleva a la órbita circular de radio R_ORBITA, con la
+// velocidad que esa órbita pide en ese pozo, para que no acabe ni dentro de la masa ni fuera de la malla.
+// Si sale por el borde se vuelve a lanzar. Devuelve true cuando ha habido relanzamiento.
+const R_ORBITA = 0.66, V_BOLA = 0.57, K_POZO = 6, BORDE = 1.5;
+export function lanzaBola(b = {}) { b.x = -BORDE; b.z = R_ORBITA; b.vx = V_BOLA; b.vz = 0; return b; }
+export function pasoBola(b, D, s, m, dt) {
+    const d2 = b.x * b.x + b.z * b.z, d = Math.sqrt(d2) || 1e-6;
+    const a = K_POZO * D * s / (d2 + s * s) ** 1.5;
+    b.vx -= a * b.x * dt; b.vz -= a * b.z * dt;
+    const k = 1.6 * suave(0.1, 0.5, m) * dt;
+    if (k > 0) {
+        const sentido = b.x * b.vz - b.z * b.vx < 0 ? -1 : 1, vc = d * Math.sqrt(a), vr = (R_ORBITA - d) * 1.5;
+        b.vx += ((-b.z * sentido * vc + b.x * vr) / d - b.vx) * k;
+        b.vz += ((b.x * sentido * vc + b.z * vr) / d - b.vz) * k;
+    }
+    b.x += b.vx * dt; b.z += b.vz * dt;
+    if (Math.abs(b.x) > BORDE || Math.abs(b.z) > BORDE) { lanzaBola(b); return true; }
+    return false;
+}
+// Forma del pozo y de la masa según el avance p de la escena: primero aparece la masa (m) y luego se comprime (c)
+export function pozoDe(p) {
+    const m = suave(0.04, 0.38, p), c = suave(0.5, 1, p);
+    return { m, c, D: m * (0.42 + 2.3 * c), s: mezcla(0.45, 0.11, c), R: mezcla(0.17, 0.035, c) * m };
+}
+
 export function curvatura(canvas) {
     const ctx = canvas.getContext('2d');
+    // Estado de la bola y su estela (x, z de los últimos instantes); `fijo` es el avance ya resuelto en quieto
+    const bola = lanzaBola(), estela = [], PASO = 1 / 120;
+    let fijo = -1;
     return {
-        pintar(p, t, w, h) {
+        pintar(p, t, w, h, dt) {
             const { cx, cy, ancho } = encuadre(w, h);
-            const m = suave(0.04, 0.38, p), c = suave(0.5, 1, p);
-            const D = m * (0.42 + 2.3 * c), s = mezcla(0.45, 0.11, c);
+            const { m, c, D, s, R } = pozoDe(p);
             const pozo = d => -D * s / Math.sqrt(d * d + s * s);
             const S = (ancho ? Math.min(w * 0.3, h * 0.52) : w * 0.46);
             const P = camara(1.02, S, cx, cy - S * 0.12 * m);
@@ -49,21 +78,28 @@ export function curvatura(canvas) {
             }
             // La masa: la misma, cada vez en menos sitio
             if (m > 0.01) {
-                const R = mezcla(0.17, 0.035, c) * m, q = P(0, pozo(0) + R, 0);
+                const q = P(0, pozo(0) + R, 0);
                 const g = ctx.createRadialGradient(q[0] - R * S * 0.3, q[1] - R * S * 0.3, 0, q[0], q[1], R * S * q[2]);
                 g.addColorStop(0, rgba(mix3(TEXTO, CALIDO, c), 1)); g.addColorStop(1, rgba(mix3(CALIDO, [60, 20, 0], 0.5 + 0.4 * c), 1));
                 ctx.fillStyle = g; ctx.beginPath(); ctx.arc(q[0], q[1], Math.max(1.5, R * S * q[2]), 0, 7); ctx.fill();
             }
-            // La bola de prueba: recta sin masa, en órbita con ella
-            const pos = tt => {
-                const xr = ((tt * 0.22) % 1) * 2.6 - 1.3, a = tt * (0.7 + 0.9 * m * (1 + c));
-                const x = mezcla(xr, Math.cos(a) * 0.66, m), z = mezcla(0.66, Math.sin(a) * 0.66, m);
-                return P(x, pozo(Math.hypot(x, z)) + 0.02, z);
+            // La bola de prueba: recta sin masa, en órbita con ella. Avanza con el tiempo real, en pasos cortos;
+            // en quieto se resuelve una vez por posición, dejándola correr unos segundos desde el lanzamiento
+            const avanza = seg => {
+                for (let n = Math.ceil(seg / PASO), i = 0; i < n; i++) {
+                    if (pasoBola(bola, D, s, m, seg / n)) estela.length = 0;
+                    estela.push(bola.x, bola.z);
+                }
+                if (estela.length > 240) estela.splice(0, estela.length - 240);
             };
-            for (let k = 28; k >= 0; k--) {
-                const q = pos(t - k * 0.035);
-                ctx.fillStyle = rgba(TEXTO, k ? 0.5 * (1 - k / 28) : 1);
-                ctx.beginPath(); ctx.arc(q[0], q[1], (k ? 1.4 : 4) * Math.max(1, h / 800) * q[2], 0, 7); ctx.fill();
+            if (dt) { avanza(dt); fijo = -1; } else if (p !== fijo) { fijo = p; lanzaBola(bola); estela.length = 0; avanza(7.5); }
+            const n = estela.length / 2;
+            for (let k = (n - 1) % 4; k < n; k += 4) {
+                const x = estela[2 * k], z = estela[2 * k + 1], ultima = k === n - 1;
+                const q = P(x, pozo(Math.hypot(x, z)) + 0.02, z);
+                const borde = 1 - suave(0.8, 1.3, Math.max(Math.abs(x), Math.abs(z)));
+                ctx.fillStyle = rgba(TEXTO, (ultima ? 1 : 0.5 * k / n) * borde);
+                ctx.beginPath(); ctx.arc(q[0], q[1], (ultima ? 4 : 1.4) * Math.max(1, h / 800) * q[2], 0, 7); ctx.fill();
             }
             return { compacidad: num(m * mezcla(0.04, 1, c * c), 2) };
         },

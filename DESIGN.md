@@ -34,7 +34,7 @@ components:
 
 **Creative North Star: "El artículo de física hecho paisaje"**
 
-La página es una caída y el scroll es la coordenada radial. Cada escena es un plano fijo a pantalla completa, dibujado en código (WebGL o canvas 2D), con una columna de texto que pasa por encima y un cuadro de lecturas que cambia con la posición. Sobria y exacta: letra de TeX, trazo fino de diagrama, negro con tinte azul. No hay rasters, tarjetas, sombras ni iconos; la imagen es el cálculo. **Key Characteristics:** un plano fijo por idea; dos colores con significado físico; cifras vivas en un instrumento, nunca sueltas en el texto; ecuaciones compuestas en HTML; lectura completa sin JavaScript, sin WebGL y con movimiento reducido.
+La página es una caída y el scroll es la coordenada radial. Cada escena es un plano fijo a pantalla completa, dibujado en código (WebGL o canvas 2D), con una columna de texto que pasa por encima y un cuadro de lecturas que cambia con la posición. Sobria y exacta: letra de TeX, trazo fino de diagrama, negro con tinte azul. No hay rasters, tarjetas, sombras ni iconos (la única excepción son las costas de la Tierra, calcadas de un mapa real); la imagen es el cálculo. **Key Characteristics:** un plano fijo por idea; dos colores con significado físico; cifras vivas en un instrumento, nunca sueltas en el texto; ecuaciones compuestas en HTML; lectura completa sin JavaScript, sin WebGL y con movimiento reducido.
 
 ## Colors
 
@@ -42,7 +42,7 @@ Negro azulado y hueso, con dos temperaturas de cuerpo negro como únicos acentos
 
 - **Primary, Ámbar 3 200 K** (`calido`): lo profundo y lento, y todo lo que se puede tocar o está activo: subrayado de enlaces, hover, foco, selección, cursor, borde de campos, resultado de una lectura, subtítulo de planeta.
 - **Secondary, Azul blanco 12 000 K** (`frio`): lo lejano y rápido: ecuaciones, símbolos de variable en las lecturas, rayos que escapan, reloj lejano.
-- **Neutral:** `fondo` (página y velos), `fondo-2` (arranque del cierre), `texto` (hueso cálido), `tenue` (etiquetas, notas, autor, pie), `linea` (filete de 1px, frío al 20 %).
+- **Neutral:** `fondo` (página y velos), `fondo-2` (reserva, sin uso ahora), `texto` (hueso cálido), `tenue` (etiquetas, notas, autor, pie), `linea` (filete de 1px, frío al 20 %).
 
 **Regla de las Dos Temperaturas.** `frio` y `calido` se derivan de la fórmula del cuerpo negro y un test lo comprueba; no se retocan a ojo ni se añade un tercer acento. Donde hay una magnitud continua (profundidad, avance, velocidad) se mezcla de frío a cálido: barra de avance, pista del deslizador, malla, reloj que baja. **Regla del Color Físico.** Solo los renders WebGL salen de la pareja: el disco usa una rampa de temperatura (rojo oscuro, ámbar, blanco, azul) y cada planeta su albedo. Los diagramas en canvas usan únicamente `frio`, `calido` y `texto` con alfa, y negro puro para el agujero.
 
@@ -60,7 +60,7 @@ Negro azulado y hueso, con dos temperaturas de cuerpo negro como únicos acentos
 
 ## Layout
 
-Margen lateral único (`margen`) compartido por cabecera, texto y cierre. Escena: plano `sticky` de 100svh y, encima, pasos de 100svh con el texto centrado en vertical en una columna izquierda de 29rem; la figura vive a la derecha y las lecturas abajo a la derecha. Los bloques en flujo normal respiran con `bloque` y miden 46rem; el cierre va en dos columnas autoajustadas. Pantalla estrecha (`max-aspect-ratio: 115/100` o `max-width: 760px`): figura arriba, texto abajo, lecturas en una franja opaca de dos columnas pegada al borde inferior; desaparece el capítulo de la cabecera. Movimiento: el texto entra y sale con su posición en la ventana (opacidad, desenfoque de 8px y 1.5rem de desplazamiento, `animation-timeline: view()`); las transiciones de estado duran 0.2s con `cubic-bezier(0.16, 1, 0.3, 1)`. Con movimiento reducido o sin JavaScript nada se fija y todo se lee de corrido.
+Margen lateral único (`margen`) compartido por cabecera y texto. Escena: plano `sticky` de 100svh y, encima, pasos de 100svh con el texto centrado en vertical en una columna izquierda de 29rem; la figura vive a la derecha y las lecturas abajo a la derecha. Los bloques en flujo normal respiran con `bloque` y miden 46rem; la página acaba en el último plano, la travesía, cuyo paso final («Fin del viaje») lleva los tres enlaces de salida. Pantalla estrecha (`max-aspect-ratio: 115/100` o `max-width: 760px`): figura arriba, texto abajo, lecturas en una franja opaca de dos columnas pegada al borde inferior; desaparece el capítulo de la cabecera. Movimiento: el texto entra y sale con su posición en la ventana (opacidad, desenfoque de 8px y 1.5rem de desplazamiento, `animation-timeline: view()`); las transiciones de estado duran 0.2s con `cubic-bezier(0.16, 1, 0.3, 1)`. Con movimiento reducido o sin JavaScript nada se fija y todo se lee de corrido.
 
 ## Elevation & Depth
 

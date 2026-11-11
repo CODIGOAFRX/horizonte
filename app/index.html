@@ -30,7 +30,7 @@
     <main>
         <section class="escena portada" id="portada" data-escena="portada" data-titulo="" data-quieto="0">
             <div class="plano">
-                <canvas role="img" aria-label="Agujero negro con su disco de acreción. La luz de la parte trasera del disco se curva y aparece por encima y por debajo de la sombra."></canvas>
+                <canvas role="img" aria-label="Agujero negro con su disco de acreción. La luz de la parte trasera del disco se curva y aparece por encima y por debajo de la sombra. Las estrellas del fondo giran despacio y se estiran al pasar junto a ella."></canvas>
                 <dl class="lecturas">
                     <div><dt><i>r</i>, distancia al centro</dt><dd><span data-v="r">30,0</span> radios</dd></div>
                 </dl>
@@ -75,7 +75,7 @@
 
         <section class="escena" id="planetas" data-escena="planetas" data-titulo="Planetas" data-quieto="0.286">
             <div class="plano">
-                <canvas role="img" aria-label="Los ocho planetas del sistema solar, uno tras otro, dibujados con ruido procedural."></canvas>
+                <canvas role="img" aria-label="Los ocho planetas del sistema solar, uno tras otro, sobre un fondo de estrellas con una galaxia lejana y alguna estrella fugaz. La Tierra lleva sus continentes reales."></canvas>
                 <dl class="lecturas">
                     <div><dt>Planeta</dt><dd data-v="nombre">Mercurio</dd></div>
                     <div><dt><i>g</i>, gravedad en superficie</dt><dd data-v="g"></dd></div>
@@ -199,8 +199,7 @@
 
         <section class="escena" id="descenso" data-escena="descenso" data-titulo="Descenso" data-quieto="0.3">
             <div class="plano">
-                <canvas role="img" aria-label="El agujero negro visto cada vez más cerca. Al final la cámara mira hacia atrás y el cielo entero se encoge en un círculo."></canvas>
-                <div class="negro" aria-hidden="true"></div>
+                <canvas role="img" aria-label="El agujero negro visto cada vez más cerca. Al final la cámara mira hacia atrás y el cielo entero, con sus estrellas, se encoge en un círculo que se ve hasta el último momento."></canvas>
                 <dl class="lecturas">
                     <div><dt><i>r</i>, en radios de Schwarzschild</dt><dd data-v="r"></dd></div>
                     <div><dt>Distancia al centro</dt><dd data-v="km"></dd></div>
@@ -264,18 +263,37 @@
             </div>
         </section>
 
-        <section class="cierre" id="cierre" aria-labelledby="t-cierre">
-            <h2 id="t-cierre">Cómo está hecho</h2>
-            <div class="columnas">
-                <p>Sin vídeo, sin imágenes y sin librerías. El agujero negro es un sombreador de WebGL escrito a mano que lanza un rayo por cada píxel y lo integra paso a paso en la métrica de Schwarzschild. Los planetas son ruido procedural sobre una esfera. La malla, los relojes, los rayos y la garganta se dibujan en canvas.</p>
-                <p>Cada cifra sale de su fórmula con constantes reales y se recalcula con la posición del scroll. Los dos colores de la página son los de un cuerpo negro a 12 000 y a 3 200 kelvin. La letra es Computer Modern, la de los artículos de física.</p>
+        <section class="escena" id="travesia" data-escena="travesia" data-titulo="Travesía" data-quieto="0.45">
+            <div class="plano">
+                <canvas role="img" aria-label="La boca de un agujero de gusano vista de frente: una esfera con otro cielo dentro. La cámara entra, cruza la garganta y sale ante una galaxia espiral."></canvas>
+                <dl class="lecturas">
+                    <div><dt>Dónde estás</dt><dd data-v="lado"></dd></div>
+                    <div><dt><i>l</i>, distancia a la garganta</dt><dd data-v="l"></dd></div>
+                    <div><dt>Ancho aparente de la boca</dt><dd data-v="boca"></dd></div>
+                </dl>
             </div>
-            <ul class="enlaces">
-                <li><a href="https://github.com/CODIGOAFRX/horizonte" rel="noopener">Leer el código en GitHub</a></li>
-                <li><a href="https://pedrogomez.dev/">Ver el resto del portfolio</a></li>
-                <li><a href="#portada">Volver arriba</a></li>
-            </ul>
-            <p class="pie">Pedro Gómez, 2026. Tipografía Computer Modern Unicode, con licencia SIL Open Font. Sin cookies ni analítica.</p>
+            <div class="pasos">
+                <div class="paso">
+                    <h2>Crúzalo</h2>
+                    <p>Supón que la garganta aguanta. De frente no parece un túnel: es una esfera, y dentro de ella se ve un cielo que no es el tuyo.</p>
+                </div>
+                <div class="paso">
+                    <p>Aquí no hay horizonte ni marea que te rompa. La esfera crece hasta ocupar medio cielo y tus estrellas se van quedando atrás, apretadas contra su borde.</p>
+                </div>
+                <div class="paso">
+                    <p>Al otro lado espera otra galaxia. No sería raro: en el universo observable hay unos dos billones, y la luz de las más lejanas ha viajado más de trece mil millones de años para llegar hasta nosotros.</p>
+                    <p class="nota">Casi todas se alejan. El espacio entre ellas crece, y cada vez más deprisa.</p>
+                </div>
+                <div class="paso">
+                    <h2>Fin del viaje</h2>
+                    <p>Has caído desde la órbita de la Tierra hasta el horizonte de un agujero negro y has salido bajo otro cielo. Nada estaba grabado: cada imagen se ha calculado en tu navegador mientras bajabas.</p>
+                    <p class="salidas">
+                        <a href="#portada">Volver a empezar</a>
+                        <a href="https://github.com/CODIGOAFRX/horizonte" rel="noopener">Leer el código</a>
+                        <a href="https://pedrogomez.dev/">Más proyectos de Pedro Gómez</a>
+                    </p>
+                </div>
+            </div>
         </section>
     </main>
 </body>

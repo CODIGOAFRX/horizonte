@@ -1,11 +1,11 @@
 // Arranque: liga cada escena al scroll, pinta sólo las visibles y escribe sus lecturas en el DOM.
-import { portada, descenso, planetas } from './gl.js';
+import { portada, descenso, planetas, travesia } from './gl.js';
 import { curvatura, relojes, luz, gusano } from './escenas.js';
 import { lorentz, SGR_A, tHawking, evaporacion, radioS, ANIO, num, cifras } from './fisica.js';
 
 const raiz = document.documentElement;
 const quieto = matchMedia('(prefers-reduced-motion: reduce)');
-const FABRICAS = { portada, curvatura, planetas, relojes, luz, descenso, gusano };
+const FABRICAS = { portada, curvatura, planetas, relojes, luz, descenso, gusano, travesia };
 
 const escenas = [];
 for (const seccion of document.querySelectorAll('[data-escena]')) {

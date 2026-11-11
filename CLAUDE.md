@@ -12,8 +12,9 @@ texto de la web y de los comentarios va en español de España, sin rayas (el te
 | Archivo | Qué hace |
 |---|---|
 | `app/fisica.js` | Constantes, fórmulas, integración de los rayos de luz y formato de números. Sin DOM; lo usa el test |
-| `app/gl.js` | WebGL a mano: sombreador del agujero negro (portada y descenso) y de los planetas |
-| `app/escenas.js` | Canvas 2D: malla curvada, relojes, rayos de luz y agujero de gusano |
+| `app/gl.js` | WebGL a mano: sombreador del agujero negro (portada y descenso), de los planetas y de la travesía del agujero de gusano |
+| `app/tierra.js` | Máscara de tierra y mar calcada de Natural Earth. Generado por `scripts/tierra.mjs`: no se edita a mano |
+| `app/escenas.js` | Canvas 2D: malla curvada (con la bola simulada: `pasoBola`, que el test recorre en todo el scroll), relojes, rayos de luz y agujero de gusano |
 | `app/horizonte.js` | Arranque: progreso de cada escena con el scroll, pintado sólo de las visibles y lecturas en el DOM |
 | `scripts/build.mjs` | Copia `app/` a `dist/proyecto/horizonte`, pone la ruta base y versiona CSS y JS con su hash |
 
@@ -21,7 +22,7 @@ Cada escena es una `<section data-escena>` con un `.plano` fijo (canvas y lectur
 pasan por encima. Su fábrica devuelve `pintar(p, t, w, h, dt)`, con `p` de 0 a 1, y ésta devuelve los valores que
 se escriben en los `[data-v]` de la sección.
 
-Reglas: las escenas avanzan y retroceden con el scroll (sólo se mueve solo el ambiente: rotación y disco), la
+Reglas: las escenas avanzan y retroceden con el scroll (sólo se mueve solo el ambiente: rotación, disco, giro del cielo en la portada y la bola de la malla), la
 página se lee sin JavaScript y sin WebGL, y con `prefers-reduced-motion` no se fija nada. Los números que se
 enseñan se calculan en `fisica.js`: no se escriben cifras a mano. Sin analítica, cookies ni peticiones a terceros.
 La CSP no admite estilos ni scripts en línea.
