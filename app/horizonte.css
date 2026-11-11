@@ -1,0 +1,183 @@
+/* Horizonte. Dos colores con significado: frío (cuerpo negro a 12 000 K) para lo lejano,
+   cálido (3 200 K) para lo profundo. El test comprueba que coinciden con la fórmula. */
+@font-face { font-family: "CMU Serif"; src: url("fonts/cmu-serif.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "CMU Serif"; src: url("fonts/cmu-serif-italica.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "CMU Bright"; src: url("fonts/cmu-bright.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+
+:root {
+    --fondo: #04060b;
+    --fondo-2: #0b101b;
+    --texto: #ece7dc;
+    --tenue: #a4abba;
+    --frio: #bfd3ff;
+    --calido: #ffb87b;
+    --linea: rgb(191 211 255 / 0.2);
+    --serif: "CMU Serif", "Latin Modern Roman", "Times New Roman", serif;
+    --medida: "CMU Bright", "Helvetica Neue", Arial, sans-serif;
+    --margen: clamp(1.25rem, 5vw, 5rem);
+    --salida: cubic-bezier(0.16, 1, 0.3, 1);
+    color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--fondo); scrollbar-color: #2b3550 var(--fondo); scrollbar-width: thin; -webkit-text-size-adjust: 100%; }
+body {
+    margin: 0; background: var(--fondo); color: var(--texto);
+    font: 400 clamp(1.125rem, 0.95rem + 0.5vw, 1.3125rem)/1.5 var(--serif);
+    text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
+    caret-color: var(--calido);
+}
+::selection { background: var(--calido); color: var(--fondo); }
+a { color: inherit; text-decoration-color: var(--calido); text-decoration-thickness: 1px; text-underline-offset: 0.22em; transition: color 0.2s var(--salida); }
+a:hover { color: var(--calido); }
+:focus-visible { outline: 2px solid var(--calido); outline-offset: 4px; border-radius: 2px; }
+h1, h2, h3, p, dl, dd, ul { margin: 0; padding: 0; }
+h1, h2, h3 { font-weight: 400; text-wrap: balance; }
+p { text-wrap: pretty; }
+i, cite { font-style: italic; }
+sub, sup { font-size: 0.68em; line-height: 0; }
+
+.salto { position: fixed; left: var(--margen); top: -4rem; z-index: 20; background: var(--calido); color: var(--fondo); padding: 0.4rem 0.8rem; text-decoration: none; }
+.salto:focus { top: 0.6rem; }
+
+/* Cabecera */
+.cab {
+    position: fixed; inset: 0 0 auto 0; z-index: 10; display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; gap: 1rem;
+    padding: 0.9rem var(--margen) 0.8rem; font-size: 1rem;
+    background: linear-gradient(to bottom, rgb(4 6 11 / 0.88), rgb(4 6 11 / 0));
+}
+.cab a { text-decoration: none; }
+.marca { font-style: italic; justify-self: start; }
+.capitulo { color: var(--tenue); font-style: italic; text-align: center; white-space: nowrap; }
+.autor { justify-self: end; color: var(--tenue); }
+.avance { position: absolute; inset: 0 0 auto 0; height: 2px; }
+.avance i { display: block; height: 100%; background: linear-gradient(to right, var(--frio), var(--calido)); transform: scaleX(0); transform-origin: left; }
+
+/* Escenas ligadas al scroll */
+.escena { position: relative; }
+.plano { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: var(--fondo); }
+.plano canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.plano::after { /* velo para que el texto se lea sobre la imagen */
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to right, rgb(4 6 11 / 0.82) 0%, rgb(4 6 11 / 0.5) 32%, rgb(4 6 11 / 0) 56%);
+}
+.negro { position: absolute; inset: 0; background: #000; opacity: var(--negro, 0); pointer-events: none; }
+
+.pasos { position: relative; z-index: 2; margin-top: -100vh; margin-top: -100svh; pointer-events: none; }
+.paso {
+    min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; gap: 1.1rem;
+    padding: 6rem var(--margen); max-width: calc(29rem + 2 * var(--margen));
+}
+.paso > * { pointer-events: auto; }
+.paso h2 { font-size: clamp(2.1rem, 1.3rem + 3vw, 3.6rem); line-height: 1.04; letter-spacing: -0.015em; margin-bottom: 0.4rem; }
+.paso h3 { font-size: clamp(1.7rem, 1.2rem + 1.8vw, 2.5rem); line-height: 1.1; font-style: italic; color: var(--calido); }
+.paso h2 + h3 { margin-top: 1.6rem; }
+.nota { color: var(--tenue); font-size: 0.9em; }
+.ec { font-size: 1.25em; color: var(--frio); margin-top: 0.5rem; white-space: nowrap; }
+.raiz { border-top: 1px solid currentColor; padding: 0.08em 0.15em 0 0.1em; }
+
+/* El texto entra y sale con su posición en la ventana */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        html:not(.sin-js) .paso > * { animation: paso linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+        html:not(.sin-js) .portada .paso:first-child > * { animation-name: paso-sale; }
+    }
+}
+@keyframes paso {
+    0%, 22% { opacity: 0; filter: blur(8px); transform: translateY(1.5rem); }
+    40%, 62% { opacity: 1; filter: blur(0); transform: none; }
+    80%, 100% { opacity: 0; filter: blur(8px); transform: translateY(-1.5rem); }
+}
+@keyframes paso-sale {
+    0%, 62% { opacity: 1; filter: blur(0); transform: none; }
+    85%, 100% { opacity: 0; filter: blur(8px); transform: translateY(-1.5rem); }
+}
+
+/* Portada */
+.portada .paso:first-child { justify-content: flex-end; padding-bottom: clamp(3rem, 9vh, 6rem); max-width: none; }
+h1 { font-size: clamp(4.2rem, 1rem + 15vw, 12rem); line-height: 0.86; letter-spacing: -0.035em; margin-left: -0.04em; }
+.entrada { max-width: 27rem; font-size: 1.12em; }
+.portada .plano::after { background: linear-gradient(to top, rgb(4 6 11 / 0.7), rgb(4 6 11 / 0) 45%); }
+
+/* Lecturas: los instrumentos de cada escena */
+.lecturas { font-family: var(--medida); font-size: 0.9rem; line-height: 1.3; font-variant-numeric: tabular-nums; }
+.lecturas > div { display: flex; justify-content: space-between; align-items: baseline; gap: 1.5rem; padding: 0.45rem 0; border-top: 1px solid var(--linea); }
+.lecturas dt { color: var(--tenue); }
+.lecturas dt i { font-family: var(--serif); font-size: 1.12em; color: var(--frio); }
+.lecturas dd { text-align: right; color: var(--texto); min-height: 1.3em; }
+.lecturas .ancha dd { text-align: left; color: var(--calido); font-family: var(--serif); font-size: 1.12rem; }
+.plano .lecturas { position: absolute; z-index: 3; right: calc(var(--margen) - 0.9rem); bottom: clamp(1rem, 3vh, 2rem); width: min(24.8rem, 36vw); padding: 0.2rem 0.9rem 0.3rem; background: rgb(4 6 11 / 0.7); }
+.plano .lecturas > div:first-child { border-top: 0; }
+.portada .plano .lecturas { width: auto; background: transparent; }
+.portada .lecturas > div { border: 0; }
+
+input[type="number"] {
+    width: 4.6rem; font: inherit; color: var(--texto); background: transparent; border: 0; border-bottom: 1px solid var(--calido);
+    text-align: right; padding: 0 0 0.05rem; border-radius: 0; -moz-appearance: textfield; appearance: textfield;
+}
+input[type="number"]::-webkit-inner-spin-button { display: none; }
+input[type="number"]:hover { background: rgb(255 184 123 / 0.1); }
+
+/* Bloques en flujo normal */
+.aparte, .cierre { padding: clamp(6rem, 18vh, 11rem) var(--margen); max-width: calc(46rem + 2 * var(--margen)); }
+.aparte h2, .cierre h2 { font-size: clamp(2.1rem, 1.3rem + 3vw, 3.6rem); line-height: 1.04; letter-spacing: -0.015em; margin-bottom: 1.4rem; }
+.aparte > p { max-width: 34rem; }
+.aparte > p + p { margin-top: 1.1rem; }
+.mando { margin-top: 2.4rem; display: grid; gap: 0.9rem; }
+.mando label { font-family: var(--medida); font-size: 0.9rem; color: var(--tenue); }
+.lecturas.enlinea > div:last-child { border-bottom: 1px solid var(--linea); }
+.lecturas.enlinea > div:last-child dd { color: var(--calido); }
+
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 2.75rem; background: transparent; margin: 0; cursor: ew-resize; }
+input[type="range"]::-webkit-slider-runnable-track { height: 2px; background: linear-gradient(to right, var(--frio), var(--calido)); }
+input[type="range"]::-moz-range-track { height: 2px; background: linear-gradient(to right, var(--frio), var(--calido)); }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 1.25rem; height: 1.25rem; margin-top: calc(-0.625rem + 1px); border-radius: 50%; background: var(--fondo); border: 2px solid var(--calido); transition: transform 0.2s var(--salida), background 0.2s; }
+input[type="range"]::-moz-range-thumb { width: 1rem; height: 1rem; border-radius: 50%; background: var(--fondo); border: 2px solid var(--calido); }
+input[type="range"]:hover::-webkit-slider-thumb, input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.25); background: var(--calido); }
+
+.cierre { max-width: none; border-top: 1px solid var(--linea); background: linear-gradient(to bottom, var(--fondo-2), var(--fondo) 70%); }
+.columnas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1.4rem clamp(2rem, 5vw, 4.5rem); max-width: 68rem; }
+.enlaces { list-style: none; margin-top: 3.2rem; display: flex; flex-wrap: wrap; gap: 0.9rem 2.6rem; font-size: 1.25em; }
+.enlaces a { display: inline-block; padding: 0.3rem 0; }
+.pie { margin-top: 5rem; color: var(--tenue); font-family: var(--medida); font-size: 0.85rem; }
+
+/* Sin WebGL: la escena pierde la imagen, no el texto */
+.sin-gl .plano { background: radial-gradient(circle at 68% 50%, #000 0 9vh, #3a1c08 9.2vh, var(--fondo) 46vh); }
+.sin-gl canvas { display: none; }
+
+/* Sin JavaScript o con movimiento reducido: nada se fija y todo se lee de corrido */
+.sin-js .plano { display: none; }
+.sin-js .pasos, .quieto .pasos { margin-top: 0; }
+.sin-js .paso, .quieto .paso { min-height: 0; padding-block: 2.2rem; }
+.sin-js .portada .paso:first-child, .quieto .portada .paso:first-child { padding-top: 7rem; }
+.quieto .plano { position: relative; height: 78vh; }
+.quieto .plano::after { display: none; }
+.quieto .portada .paso:first-child { justify-content: flex-start; }
+
+/* Pantallas estrechas: la figura arriba, el texto abajo, las lecturas en una franja fija */
+@media (max-aspect-ratio: 115/100), (max-width: 760px) {
+    .capitulo { display: none; }
+    .cab { grid-template-columns: 1fr auto; }
+    .plano::after { background: linear-gradient(to top, rgb(4 6 11 / 0.94) 0%, rgb(4 6 11 / 0.8) 38%, rgb(4 6 11 / 0) 66%); }
+    .paso { justify-content: flex-end; padding: 5rem var(--margen) calc(var(--franja, 7.5rem) + 1.5rem); max-width: none; }
+    .plano .lecturas {
+        left: 0; right: 0; bottom: 0; width: auto; padding: 0.35rem var(--margen) 0.6rem; background: var(--fondo);
+        display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.25rem; font-size: 0.78rem; border-top: 1px solid var(--linea);
+    }
+    .plano .lecturas > div { flex-direction: column; gap: 0; padding: 0.3rem 0; border: 0; }
+    .plano .lecturas dd { text-align: left; }
+    .plano .lecturas .ancha { grid-column: 1 / -1; }
+    .lecturas .ancha dd { font-size: 0.95rem; }
+    .portada { --franja: 2.5rem; }
+    .portada .plano .lecturas { background: transparent; border: 0; }
+    #curvatura { --franja: 3.5rem; }
+    #planetas, #descenso { --franja: 9.5rem; }
+    .quieto .paso { padding-bottom: 2.2rem; }
+    /* El texto se lee en la parte baja y se va antes de pisar la figura */
+    html:not(.sin-js) .paso > * { animation-name: paso-bajo; }
+}
+@keyframes paso-bajo {
+    0%, 16% { opacity: 0; filter: blur(8px); transform: translateY(1rem); }
+    26%, 46% { opacity: 1; filter: blur(0); transform: none; }
+    60%, 100% { opacity: 0; filter: blur(8px); transform: translateY(-1rem); }
+}

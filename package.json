@@ -1,0 +1,14 @@
+{
+  "name": "horizonte",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Una caída hasta el borde de un agujero negro, ligada al scroll y calculada en el navegador.",
+  "scripts": {
+    "test": "node test/horizonte.test.mjs",
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build && node scripts/dev.mjs",
+    "deploy": "npm test && npm run build && npx --yes wrangler@4.151.2 deploy"
+  },
+  "engines": { "node": ">=22" }
+}

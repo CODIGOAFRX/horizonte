@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/wrangler/config-schema.json",
+  "name": "horizonte",
+  "compatibility_date": "2026-11-05",
+  "workers_dev": true,
+  // Sólo archivos estáticos: las escenas se calculan en el navegador.
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  },
+  "routes": [
+    { "pattern": "pedrogomez.dev/proyecto/horizonte", "zone_name": "pedrogomez.dev" },
+    { "pattern": "pedrogomez.dev/proyecto/horizonte/*", "zone_name": "pedrogomez.dev" },
+    { "pattern": "www.pedrogomez.dev/proyecto/horizonte", "zone_name": "pedrogomez.dev" },
+    { "pattern": "www.pedrogomez.dev/proyecto/horizonte/*", "zone_name": "pedrogomez.dev" }
+  ]
+}

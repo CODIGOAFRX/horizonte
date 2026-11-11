@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.wrangler/
+.claude/
+.impeccable/
+.taste-skill/
+skills-lock.json

@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="es" class="sin-js">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Horizonte. Una caída hasta el borde de un agujero negro</title>
+    <meta name="description" content="Experiencia ligada al scroll sobre la gravedad: curvatura, planetas, dilatación del tiempo, lentes gravitatorias, agujeros negros y de gusano. Todo calculado en el navegador.">
+    <meta name="author" content="Pedro Gómez">
+    <meta name="theme-color" content="#04060b">
+    <meta property="og:title" content="Horizonte">
+    <meta property="og:description" content="Una caída hasta el borde de un agujero negro, calculada en tu navegador.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pedrogomez.dev{{BASE}}/">
+    <link rel="canonical" href="https://pedrogomez.dev{{BASE}}/">
+    <link rel="icon" href="{{BASE}}/favicon.svg" type="image/svg+xml">
+    <link rel="preload" href="{{BASE}}/fonts/cmu-serif.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{{BASE}}/horizonte.css?v={{v:horizonte.css}}">
+    <script type="module" src="{{BASE}}/horizonte.js?v={{v:horizonte.js}}"></script>
+</head>
+<body>
+    <a class="salto" href="#curvatura">Saltar al contenido</a>
+
+    <header class="cab">
+        <a class="marca" href="#portada">Horizonte</a>
+        <span class="capitulo" data-capitulo aria-hidden="true"></span>
+        <a class="autor" href="https://pedrogomez.dev/">Pedro Gómez</a>
+        <div class="avance" aria-hidden="true"><i></i></div>
+    </header>
+
+    <main>
+        <section class="escena portada" id="portada" data-escena="portada" data-titulo="" data-quieto="0">
+            <div class="plano">
+                <canvas role="img" aria-label="Agujero negro con su disco de acreción. La luz de la parte trasera del disco se curva y aparece por encima y por debajo de la sombra."></canvas>
+                <dl class="lecturas">
+                    <div><dt><i>r</i>, distancia al centro</dt><dd><span data-v="r">30,0</span> radios</dd></div>
+                </dl>
+            </div>
+            <div class="pasos">
+                <div class="paso">
+                    <h1>Horizonte</h1>
+                    <p class="entrada">Una caída desde la órbita de la Tierra hasta el borde de un agujero negro. Baja despacio: el scroll es la distancia.</p>
+                </div>
+                <div class="paso">
+                    <p>En 1915 Einstein cambió la pregunta. La gravedad dejó de ser una fuerza que tira y pasó a ser la forma del espacio y del tiempo.</p>
+                    <p>Nada de lo que vas a ver está grabado. Cada rayo de luz de esta imagen se calcula ahora mismo, en tu navegador, con las ecuaciones de la relatividad general.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="escena" id="curvatura" data-escena="curvatura" data-titulo="Curvatura" data-quieto="0.62">
+            <div class="plano">
+                <canvas role="img" aria-label="Una malla plana que se hunde alrededor de una masa. Una bola que iba en línea recta pasa a orbitar el pozo."></canvas>
+                <dl class="lecturas">
+                    <div><dt><i>r<sub>s</sub></i>/<i>R</i>, compacidad</dt><dd data-v="compacidad">0,00</dd></div>
+                </dl>
+            </div>
+            <div class="pasos">
+                <div class="paso">
+                    <h2>La gravedad no tira: curva</h2>
+                    <p>Un espacio vacío es plano. Una bola lanzada sobre él sigue recta para siempre.</p>
+                </div>
+                <div class="paso">
+                    <p>Pon una masa y la malla cede. La bola sigue yendo lo más recta que puede, pero el terreno ya no es plano. Eso es una órbita.</p>
+                </div>
+                <div class="paso">
+                    <p>La masa le dice al espaciotiempo cómo curvarse y el espaciotiempo le dice a la masa cómo moverse. Así lo resumía el físico John Wheeler.</p>
+                    <p class="nota">La malla es una analogía en dos dimensiones. La curvatura real ocurre en tres, y afecta también al tiempo.</p>
+                </div>
+                <div class="paso">
+                    <p>Aprieta la misma masa en menos sitio y el pozo se hace más hondo. Si cabe entera dentro de su radio de Schwarzschild, el pozo deja de tener fondo.</p>
+                    <p class="ec"><i>r<sub>s</sub></i> = 2<i>GM</i> / <i>c</i><sup>2</sup></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="escena" id="planetas" data-escena="planetas" data-titulo="Planetas" data-quieto="0.286">
+            <div class="plano">
+                <canvas role="img" aria-label="Los ocho planetas del sistema solar, uno tras otro, dibujados con ruido procedural."></canvas>
+                <dl class="lecturas">
+                    <div><dt>Planeta</dt><dd data-v="nombre">Mercurio</dd></div>
+                    <div><dt><i>g</i>, gravedad en superficie</dt><dd data-v="g"></dd></div>
+                    <div><dt><label for="masa">Tu masa, en kg</label></dt><dd><input id="masa" type="number" inputmode="numeric" min="1" max="500" value="70"></dd></div>
+                    <div><dt>Lo que marcaría la báscula</dt><dd data-v="peso"></dd></div>
+                    <div><dt>Velocidad de escape</dt><dd data-v="escape"></dd></div>
+                    <div><dt>Retraso de tu reloj</dt><dd data-v="reloj"></dd></div>
+                </dl>
+            </div>
+            <div class="pasos">
+                <div class="paso">
+                    <h2>El mismo cuerpo, ocho pesos</h2>
+                    <h3>Mercurio</h3>
+                    <p>Pequeño y denso. Su órbita gira 43 segundos de arco por siglo más de lo que Newton predecía. Explicarlo fue la primera prueba de la relatividad general.</p>
+                    <p class="ec"><i>g</i> = <i>GM</i> / <i>R</i><sup>2</sup></p>
+                </div>
+                <div class="paso">
+                    <h3>Venus</h3>
+                    <p>Casi gemelo de la Tierra en masa y en tamaño. Aquí pesarías un diez por ciento menos.</p>
+                </div>
+                <div class="paso">
+                    <h3>Tierra</h3>
+                    <p>La referencia. Mira la última cifra: incluso en casa tu reloj va un poco más lento que uno en el espacio profundo.</p>
+                </div>
+                <div class="paso">
+                    <h3>Marte</h3>
+                    <p>Poco más de un tercio de tu peso. Saltarías más del doble de alto.</p>
+                </div>
+                <div class="paso">
+                    <h3>Júpiter</h3>
+                    <p>318 Tierras de masa. No tiene suelo: la cifra es la gravedad en lo alto de sus nubes.</p>
+                </div>
+                <div class="paso">
+                    <h3>Saturno</h3>
+                    <p>95 Tierras de masa y pesarías sólo un 14 % más que en casa. Es tan grande y tan poco denso que su gravedad apenas supera la nuestra.</p>
+                </div>
+                <div class="paso">
+                    <h3>Urano</h3>
+                    <p>Catorce Tierras y media, y pesarías menos que en casa.</p>
+                </div>
+                <div class="paso">
+                    <h3>Neptuno</h3>
+                    <p>El último. Lo que cuenta no es la masa sola, sino la masa dividida por el radio al cuadrado.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="escena" id="tiempo" data-escena="relojes" data-titulo="Tiempo" data-quieto="0.5">
+            <div class="plano">
+                <canvas role="img" aria-label="Dos relojes idénticos. El de la izquierda está lejos de toda masa. El de la derecha, cerca de ella, avanza cada vez más despacio al bajar."></canvas>
+                <dl class="lecturas">
+                    <div><dt>Dónde estás</dt><dd data-v="hito"></dd></div>
+                    <div><dt><i>r</i>, en radios de Schwarzschild</dt><dd data-v="r"></dd></div>
+                    <div><dt><i>dτ</i>/<i>dt</i>, ritmo del reloj</dt><dd data-v="factor"></dd></div>
+                    <div class="ancha"><dd data-v="lectura"></dd></div>
+                </dl>
+            </div>
+            <div class="pasos">
+                <div class="paso">
+                    <h2>Abajo, el reloj va más despacio</h2>
+                    <p>Dos relojes idénticos: uno lejos de toda masa, otro contigo. En la superficie de la Tierra la diferencia es de milisegundos al año, pero existe. Los satélites GPS la corrigen a diario; sin esa corrección, el mapa de tu móvil se desviaría kilómetros cada día.</p>
+                    <p class="ec"><i>dτ</i>/<i>dt</i> = √<span class="raiz">1 − <i>r<sub>s</sub></i>/<i>r</i></span></p>
+                </div>
+                <div class="paso">
+                    <p>En la superficie del Sol, el retraso pasa de un minuto al año. En la de una enana blanca, de dos horas.</p>
+                </div>
+                <div class="paso">
+                    <p>En una estrella de neutrones, el reloj pierde casi uno de cada cinco segundos.</p>
+                </div>
+                <div class="paso">
+                    <p>Junto al horizonte de un agujero negro, el factor no tiene límite. A una diezmilésima de radio por encima, una hora tuya son más de cuatro días fuera.</p>
+                </div>
+                <div class="paso">
+                    <p>En <cite>Interstellar</cite>, una hora en el planeta de Miller son siete años en la Tierra. Con un agujero que no gira habría que flotar a tres diezmilmillonésimas de radio del horizonte. Por eso el de la película gira casi al máximo.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="aparte" id="velocidad-bloque" aria-labelledby="t-velocidad">
+            <h2 id="t-velocidad">La velocidad hace lo mismo</h2>
+            <p>No hace falta una masa. Un reloj que se mueve también va más despacio para quien lo ve pasar. Sube la velocidad de una nave y mira cuánto tiempo pasa en la Tierra durante un viaje de diez años a bordo.</p>
+            <p class="ec"><i>γ</i> = 1 / √<span class="raiz">1 − <i>v</i><sup>2</sup>/<i>c</i><sup>2</sup></span></p>
+            <div class="mando">
+                <label for="velocidad">Velocidad de la nave</label>
+                <input id="velocidad" type="range" min="0" max="100" value="12" step="0.5">
+                <dl class="lecturas enlinea">
+                    <div><dt><i>v</i></dt><dd data-vel="beta"></dd></div>
+                    <div><dt><i>γ</i>, factor de Lorentz</dt><dd data-vel="gamma"></dd></div>
+                    <div><dt>Diez años a bordo, en la Tierra</dt><dd data-vel="viaje"></dd></div>
+                </dl>
+            </div>
+        </section>
+
+        <section class="escena" id="luz" data-escena="luz" data-titulo="Luz" data-quieto="0.8">
+            <div class="plano">
+                <canvas role="img" aria-label="Rayos de luz paralelos que pasan junto a una masa. De lejos apenas se desvían. De cerca se doblan, y los que apuntan demasiado al centro caen."></canvas>
+                <dl class="lecturas">
+                    <div><dt>Alto de la vista</dt><dd data-v="vista"></dd></div>
+                    <div><dt><i>b</i>, rayo más exterior</dt><dd data-v="impacto"></dd></div>
+                    <div><dt>Cuánto se desvía</dt><dd data-v="giro"></dd></div>
+                    <div><dt>Rayos que no salen</dt><dd data-v="capturados"></dd></div>
+                </dl>
+            </div>
+            <div class="pasos">
+                <div class="paso">
+                    <h2>La luz también cae</h2>
+                    <p>La luz no tiene masa, pero sigue la geometría. De lejos casi no se nota. En 1919 un eclipse permitió medir que el Sol desvía la luz de las estrellas 1,75 segundos de arco: justo lo que Einstein había calculado.</p>
+                    <p class="ec"><i>α</i> = 4<i>GM</i> / <i>c</i><sup>2</sup><i>b</i></p>
+                </div>
+                <div class="paso">
+                    <p>Acércate y los rayos se doblan a simple vista. Una masa entre tú y una galaxia lejana actúa como una lente: la estira en arcos o la cierra en un anillo.</p>
+                </div>
+                <div class="paso">
+                    <p>A un radio y medio existe una órbita para la luz, la esfera de fotones. Un rayo puede dar vueltas en ella antes de escapar o de caer.</p>
+                </div>
+                <div class="paso">
+                    <p>Todo rayo que apunte a menos de 2,6 radios del centro no vuelve a salir. Ese círculo es la sombra: la silueta que fotografió el Event Horizon Telescope en 2019.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="escena" id="descenso" data-escena="descenso" data-titulo="Descenso" data-quieto="0.3">
+            <div class="plano">
+                <canvas role="img" aria-label="El agujero negro visto cada vez más cerca. Al final la cámara mira hacia atrás y el cielo entero se encoge en un círculo."></canvas>
+                <div class="negro" aria-hidden="true"></div>
+                <dl class="lecturas">
+                    <div><dt><i>r</i>, en radios de Schwarzschild</dt><dd data-v="r"></dd></div>
+                    <div><dt>Distancia al centro</dt><dd data-v="km"></dd></div>
+                    <div><dt><i>dτ</i>/<i>dt</i>, ritmo del reloj</dt><dd data-v="ritmo"></dd></div>
+                    <div><dt>Velocidad de escape</dt><dd data-v="escape"></dd></div>
+                    <div><dt>Marea en tu cuerpo, aquí</dt><dd data-v="marea"></dd></div>
+                    <div><dt>En un agujero de 10 soles</dt><dd data-v="mareaE"></dd></div>
+                </dl>
+            </div>
+            <div class="pasos">
+                <div class="paso">
+                    <h2>El descenso</h2>
+                    <p>Sagitario A*, el agujero negro del centro de la Vía Láctea. Cuatro millones de soles dentro de un radio de <span data-fijo="rs-sgr">12,7 millones de km</span>: cabría de sobra en la órbita de Mercurio.</p>
+                </div>
+                <div class="paso">
+                    <p>El disco es gas a millones de grados que gira a una fracción de la velocidad de la luz. El lado que viene hacia ti brilla más: es el efecto Doppler relativista. La parte de atrás se ve por encima y por debajo porque su luz rodea el agujero.</p>
+                </div>
+                <div class="paso">
+                    <p>A tres radios termina la última órbita estable. De aquí hacia dentro nada gira. Todo cae.</p>
+                </div>
+                <div class="paso">
+                    <p>La marea es la diferencia de gravedad entre tu cabeza y tus pies. En un agujero pequeño te estiraría mucho antes de llegar. En uno tan grande como este cruzarías el horizonte sin notar nada.</p>
+                </div>
+                <div class="paso">
+                    <p>Mira hacia atrás. Todo el universo se encoge en un círculo sobre tu cabeza, cada vez más azul y más brillante.</p>
+                </div>
+                <div class="paso">
+                    <p class="ec"><i>r</i> = <i>r<sub>s</sub></i></p>
+                    <p>Desde fuera nadie te verá cruzar: tu imagen se enrojece y se congela. Para ti es un instante más.</p>
+                    <p>Hawking demostró que ni siquiera esto es eterno. El horizonte radia, a <span data-fijo="hawking-t">14 milbillonésimas de kelvin</span>, y este agujero se evaporará dentro de 10<sup data-fijo="hawking-e">87</sup> años.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="escena" id="gusano" data-escena="gusano" data-titulo="Agujero de gusano" data-quieto="0.6">
+            <div class="plano">
+                <canvas role="img" aria-label="Dos superficies unidas por una garganta estrecha. Un punto baja por una de ellas, cruza la garganta y sale por la otra."></canvas>
+                <dl class="lecturas">
+                    <div><dt>Dónde está el viajero</dt><dd data-v="lado"></dd></div>
+                    <div><dt><i>l</i>, distancia a la garganta</dt><dd data-v="l"></dd></div>
+                    <div><dt>Contorno del túnel</dt><dd data-v="contorno"></dd></div>
+                </dl>
+            </div>
+            <div class="pasos">
+                <div class="paso">
+                    <h2>¿Y si hubiera salida?</h2>
+                    <p>Las mismas ecuaciones admiten otra forma: dos regiones del espaciotiempo unidas por una garganta. Einstein y Rosen la describieron en 1935.</p>
+                </div>
+                <div class="paso">
+                    <p>Vista de lado es un túnel entre dos hojas. Podrían ser dos lugares lejanos del mismo universo, y el túnel, un atajo.</p>
+                    <p class="ec"><i>r</i>(<i>l</i>) = √<span class="raiz"><i>b</i><sub>0</sub><sup>2</sup> + <i>l</i><sup>2</sup></span></p>
+                </div>
+                <div class="paso">
+                    <p>El problema: la garganta se cierra antes de que nada pueda cruzarla. Para mantenerla abierta haría falta materia con energía negativa, y nadie la ha observado en la cantidad necesaria.</p>
+                </div>
+                <div class="paso">
+                    <p>Nadie ha visto un agujero de gusano. Tampoco nadie había visto un agujero negro cuando las ecuaciones ya lo dibujaban.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cierre" id="cierre" aria-labelledby="t-cierre">
+            <h2 id="t-cierre">Cómo está hecho</h2>
+            <div class="columnas">
+                <p>Sin vídeo, sin imágenes y sin librerías. El agujero negro es un sombreador de WebGL escrito a mano que lanza un rayo por cada píxel y lo integra paso a paso en la métrica de Schwarzschild. Los planetas son ruido procedural sobre una esfera. La malla, los relojes, los rayos y la garganta se dibujan en canvas.</p>
+                <p>Cada cifra sale de su fórmula con constantes reales y se recalcula con la posición del scroll. Los dos colores de la página son los de un cuerpo negro a 12 000 y a 3 200 kelvin. La letra es Computer Modern, la de los artículos de física.</p>
+            </div>
+            <ul class="enlaces">
+                <li><a href="https://github.com/CODIGOAFRX/horizonte" rel="noopener">Leer el código en GitHub</a></li>
+                <li><a href="https://pedrogomez.dev/">Ver el resto del portfolio</a></li>
+                <li><a href="#portada">Volver arriba</a></li>
+            </ul>
+            <p class="pie">Pedro Gómez, 2026. Tipografía Computer Modern Unicode, con licencia SIL Open Font. Sin cookies ni analítica.</p>
+        </section>
+    </main>
+</body>
+</html>
